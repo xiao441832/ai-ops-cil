@@ -1,21 +1,15 @@
 from __future__ import annotations
 
-import os
-import sys
+import asyncio
 
 from prompt_toolkit import PromptSession
 
 
-def prompt(default_text: str) -> str | None:
-    """Open a prompt_toolkit session with default text pre-filled.
-
-    Returns the final command string, or None if user pressed Ctrl+C.
-    """
+async def prompt_async(default_text: str) -> str | None:
+    """Show a pre-filled prompt and return the user's edited command."""
     session = PromptSession()
-
-    # If prompt_toolkit has issues (e.g. no TTY), fall back to basic input()
     try:
-        result = session.prompt(
+        result = await session.prompt_async(
             message="> ",
             default=default_text,
         )
@@ -23,10 +17,10 @@ def prompt(default_text: str) -> str | None:
     except (KeyboardInterrupt, EOFError):
         return None
     except Exception:
-        # Graceful degradation to basic input
+        # Fallback to plain input if prompt_toolkit fails
         print(f"> {default_text}")
         try:
-            user_input = input()
+            user_input = await asyncio.to_thread(input)
             return user_input if user_input else default_text
         except (KeyboardInterrupt, EOFError):
             return None

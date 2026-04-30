@@ -48,6 +48,9 @@ def _strip_code_fences(text: str) -> str:
 
     Handles: ```lang\\ncmd\\n```, `cmd`, and mixed surrounding text.
     """
+    # 0. Strip special model control tokens (e.g. DeepSeek/Qwen <|..|>)
+    text = re.sub(r"<\|\w+\|>", "", text).strip()
+
     # 1. Try multi-line triple-backtick fence (e.g. ```bash\\ncmd\\n```)
     m = re.search(r"```(?:\w+)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
     if m:

@@ -88,7 +88,7 @@ async def _run(user_prompt: str, cfg: config.Config) -> None:
     print(f"思考完成，请回车执行（耗时 {t.elapsed:.1f}s, token: {tokens}）")
 
     # Phase 4: Prefill and wait for user
-    final_cmd = prefill.prompt(safe_cmd)
+    final_cmd = await prefill.prompt_async(safe_cmd)
     if final_cmd is None:
         print("已取消")
         return
