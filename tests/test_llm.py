@@ -34,3 +34,15 @@ class TestStripCodeFences:
         raw = "The command to list files is:\n```bash\nls -la\n```"
         result = _strip_code_fences(raw)
         assert result == "ls -la"
+
+    def test_inline_backtick(self):
+        result = _strip_code_fences("`df -h`")
+        assert result == "df -h"
+
+    def test_inline_backtick_with_surrounding_text(self):
+        result = _strip_code_fences("Use `df -h` to check disk")
+        assert result == "df -h"
+
+    def test_single_line_triple_backtick(self):
+        result = _strip_code_fences("```df -h```")
+        assert result == "df -h"

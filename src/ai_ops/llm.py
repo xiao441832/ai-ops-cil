@@ -44,6 +44,20 @@ async def call(user_prompt: str, cfg: Config) -> tuple[str, int]:
 
 
 def _strip_code_fences(text: str) -> str:
-    """Remove ```lang...``` code fences, even when surrounded by other text."""
+    """Strip all markdown formatting LLMs commonly add around commands.
+
+    Handles: ```lang\\ncmd\\n```, `cmd`, and mixed surrounding text.
+    """
+    # 1. Try multi-line triple-backtick fence (e.g. ```bash\\ncmd\\n```)
     m = re.search(r"```(?:\w+)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
-    return m.group(1) if m else text
+    if m:
+        return m.group(1)
+    # 2. Try single-line triple-backtick fence (e.g. ```df -h```)
+    m = re.search(r"```(.+?)```", text)
+    if m:
+        return m.group(1).strip()
+    # 3. Try inline backtick (e.g. `df -h`)
+    m = re.search(r"`([^`]+)`", text)
+    if m:
+        return m.group(1).strip()
+    return text
