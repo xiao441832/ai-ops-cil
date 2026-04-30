@@ -33,5 +33,4 @@ class TestStripCodeFences:
     def test_plain_text_explanation(self):
         raw = "The command to list files is:\n```bash\nls -la\n```"
         result = _strip_code_fences(raw)
-        # The regex only matches if the ENTIRE text is a fence
-        assert result == raw
+        assert result == "ls -la"

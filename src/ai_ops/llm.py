@@ -44,6 +44,6 @@ async def call(user_prompt: str, cfg: Config) -> tuple[str, int]:
 
 
 def _strip_code_fences(text: str) -> str:
-    """Remove surrounding ```bash...``` or ```...``` if present."""
-    m = re.match(r"^\s*```(?:\w+)?\s*\n(.*?)\n\s*```\s*$", text, re.DOTALL)
+    """Remove ```lang...``` code fences, even when surrounded by other text."""
+    m = re.search(r"```(?:\w+)?\s*\n(.*?)\n\s*```", text, re.DOTALL)
     return m.group(1) if m else text
